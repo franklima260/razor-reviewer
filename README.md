@@ -1,6 +1,7 @@
 # razor-reviewer
 
-Adversarial-review, ledger-driven, testing-first development workflow for AI-assisted
+A [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) plugin for
+adversarial-review, ledger-driven, testing-first development on AI-assisted
 ("vibe code") projects — formalized from a real multi-phase project where sixteen
 adversarial review rounds repeatedly overturned "100% done" claims and caught bugs that
 green test suites had certified.
@@ -34,7 +35,46 @@ rulings recorded verbatim against the numbers they were made on. Phase boundarie
 
 ## Install
 
-Add this directory as a local plugin (marketplace entry or `--plugin-dir`), or copy the
-`skills/*` folders into `.claude/skills/` and `agents/razor.md` into `.claude/agents/` of
-a project. Skills are self-contained; the two standards templates live under the
+Requires Claude Code with plugin support (`claude plugin --help` should list the
+subcommands).
+
+### From GitHub (recommended)
+
+```bash
+claude plugin marketplace add franklima260/razor-reviewer
+claude plugin install razor-reviewer@ai-vibe-coding
+```
+
+Restart Claude Code afterward so the new skills and the `razor` agent load. Verify with
+`claude plugin list` and `claude plugin details razor-reviewer@ai-vibe-coding`.
+
+### From a local clone
+
+```bash
+git clone https://github.com/franklima260/razor-reviewer.git
+claude plugin marketplace add ./razor-reviewer
+claude plugin install razor-reviewer@ai-vibe-coding
+```
+
+### Manual (no marketplace)
+
+Copy the `skills/*` folders into a project's `.claude/skills/` and `agents/razor.md` into
+`.claude/agents/`. Skills are self-contained; the two standards templates live under the
 respective skills' `assets/`.
+
+## What you get
+
+Installed, the plugin adds five skills and one agent (~800 always-on tokens; each skill
+or agent pays its on-invoke cost only when it fires):
+
+- **`adversarial-review`** skill and **`razor`** agent — the verification protocol.
+- **`ledger`**, **`testing-standards`**, **`telemetry-standards`**, **`handoff`** skills —
+  the project discipline and the standards it enforces.
+
+Skills trigger automatically from their descriptions (e.g. asking Claude to "review the
+agent's work" or "set up testing standards"); the reviewer is also invocable as the
+`razor` subagent.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
