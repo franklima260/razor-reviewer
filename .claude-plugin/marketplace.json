@@ -1,0 +1,13 @@
+{
+  "name": "ai-vibe-coding",
+  "owner": {
+    "name": "Frank Lima"
+  },
+  "plugins": [
+    {
+      "name": "razor-reviewer",
+      "source": "./",
+      "description": "Adversarial-review, ledger-driven, testing-first development workflow. Trust nothing, verify everything by execution."
+    }
+  ]
+}
