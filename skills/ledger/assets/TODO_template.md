@@ -51,6 +51,11 @@ Everything else must keep working **exactly as before**:
   - <Spec details. Real file paths. Real API names.>
   - **Done when:** <observable, executable criteria — commands and expected outcomes>.
   - **Trap:** <the mistake an agent will plausibly make here>.
+  - 🔎 **REVIEW <N> (<date>) — <VERDICT: e.g. TICK REMOVED / CONFIRMED DONE>.**
+    <What was re-executed and from which commit; which Done-when criteria passed/failed
+    with the exact command and observed output; repro location in the BLOCKERS ledger if
+    any. Review blocks live HERE, under the task they judge — dated, numbered
+    sequentially, committed with the ledger edits they justify.>
 
 ## WHEN YOU ARE UNSURE
 

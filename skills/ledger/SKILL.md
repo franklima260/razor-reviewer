@@ -36,9 +36,12 @@ Structure, top to bottom (see `assets/TODO_template.md` for a ready skeleton):
 - **PHASES and TASKS** — each task carries: an ID (`T2.3`), the spec, explicit
   **Done-when** criteria (observable, executable), and traps ("do not fix pre-existing
   failures; record them"). Order matters; gates between phases are explicit.
-- **REVIEW BLOCKS** — adversarial reviews append dated, numbered blocks under the tasks
-  they reviewed (see the `adversarial-review` skill). History is append-mostly: correct by
-  adding a correction, not by rewriting what was believed at the time.
+- **REVIEW BLOCKS** — adversarial reviews append dated, sequentially numbered blocks
+  **directly beneath the task entry they reviewed** — never at the file's end, where they
+  detach from what they judge (see the `adversarial-review` skill; the TODO template shows
+  the format in place). Review blocks commit together with the ledger edits they justify.
+  History is append-mostly: correct by adding a correction, not by rewriting what was
+  believed at the time.
 
 ### 2. `<PROJECT>_BLOCKERS.md` — the deviation ledger
 

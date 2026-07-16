@@ -6,7 +6,9 @@ description: Run an adversarial verification review of work another agent (or yo
 # Adversarial Review ("Razor")
 
 You are the reviewer, not the implementer. Your deliverable is a set of **verified findings**
-and honest ledger updates — not fixes. The implementing party (human or agent) claims work is
+and honest ledger updates — not fixes, unless the user explicitly authorizes completing
+mechanical, fully-spec'd work (the `razor` agent definition carries the same exception);
+attribute any such work honestly. The implementing party (human or agent) claims work is
 done; your job is to find where that claim breaks before production does.
 
 The prime directive: **notes are hypotheses; only execution is evidence.** A completion note,
@@ -17,8 +19,9 @@ the committed tree, before it enters any ledger as fact.
 Why this posture works: implementers (especially AI agents) fail in systematic ways — they
 verify the happy path, write tests that share assumptions with the code, mark things done
 under time pressure, and report what they intended rather than what ran. None of this is
-malice; all of it is caught by one reviewer who re-runs everything. Projects using this
-protocol have repeatedly found that roughly one review in three overturns a "100% done" claim.
+malice; all of it is caught by one reviewer who re-runs everything. The project this
+protocol was distilled from found, across sixteen review rounds, that roughly one review
+in three overturned a "100% done" claim.
 
 ## The Protocol
 
@@ -130,7 +133,9 @@ Then the ledger actions:
 
 ## Severity ordering
 
-1. **Wrong results silently** — corrupted output, silent data loss, wrong geometry/math.
+1. **Wrong results silently** — corrupted output, silent data loss, wrong computed values.
+   Every project depends on getting its math right somewhere — money, quantities,
+   coordinates, dates; a silently wrong number is the worst thing software ships.
 2. **Invalid evidence** — a decision-driving number measured in the wrong configuration;
    a "verified" claim with no run behind it. (These outrank crashes: they corrupt human
    decisions, which outlive any single bug.)
@@ -160,6 +165,14 @@ of these has produced a real overturned "done" claim, most of them more than onc
 ## Working with ledgers
 
 If the project uses ledger files (TODO/BLOCKERS/status board — see the `ledger` skill),
-your review output goes there, as a dated, numbered review block, committed with a message
-that says what was verified and what was overturned. If it doesn't, put the review in the
-task/PR and recommend adopting ledgers — reviews that live only in chat evaporate.
+your review output goes there as a review block that is:
+
+- **placed directly beneath the task entry it reviews** — never appended at the file's end;
+- **dated and numbered** (`REVIEW 1`, `REVIEW 2`, … sequential within the project — the
+  TODO template shows the format);
+- **committed before you report** — with a message that says what was verified and what
+  was overturned. Uncommitted ledger edits are the same sin as an unverified tick: the
+  record describes a tree that doesn't exist yet.
+
+If the project has no ledgers, put the review in the task/PR and recommend adopting them —
+reviews that live only in chat evaporate.

@@ -42,6 +42,18 @@ project-specific document. Key judgment calls the template can't make for you:
 - Delete every scaffold section that doesn't apply, renumber, and remove the instruction
   block when done. A standards doc with leftover `<PLACEHOLDERS>` is unenforceable and
   reads as abandoned.
+- **§3 is extensible, and extending it is the point.** The template's anti-pattern catalog
+  (§3.1–3.10) is the floor, not the ceiling. When an incident or review catches a new way
+  tests lie, add it as a numbered entry (§3.11, §3.12, …), dated and traced to the incident
+  that caught it — project-specific learning stays in the project's doc, while the catalog
+  mechanism transfers everywhere. Two near-universal candidates worth seeding at bootstrap
+  in any project that computes values (money, percentages, coordinates, timestamps,
+  quantities): **nice-number fixtures** (round, exactly-representable values mask precision
+  and rounding bugs that any hostile value exposes — every numeric invariant needs a
+  hostile twin) and **symmetric round-trip masking** (your writer and your reader agreeing
+  proves consistency, not correctness — round-trip claims need at least one spec-derived,
+  hand-authored fixture). Cite these by the project doc's section number once added; never
+  cite a §3 number the doc doesn't contain.
 
 ## Mode 2 — AUDIT (standards exist; verify the suite against ground truth)
 
@@ -50,7 +62,10 @@ Trust nothing; bring every claim back to an executed command.
 
 1. **Run the suite(s) yourself, now.** Record counts. Compare against the doc's recorded
    counts and the project baseline. Discrepancies are findings, whoever caused them.
-2. **Grep-sweep for the anti-pattern catalog** (template §3). Practical patterns that pay:
+2. **Grep-sweep for the anti-pattern catalog** — the project doc's §3: the template's
+   §3.1–3.10 plus any project-added entries (see Mode 1). Practical greps that pay (note
+   the first is not in the base template's catalog — file it as a project §3 entry when it
+   bites):
    - float `==`/`assertEquals` on floating-point values without tolerance
    - assertions inside loops without a preceding length assertion (vacuous loops)
    - `>=` / `<=` counts where the exact value is knowable (soft assertions)
@@ -86,7 +101,9 @@ When new code lands (yours or another agent's):
 - New tests are screened against the §3 anti-pattern catalog before commit.
 - Every bug fix ships with the regression test that fails before / passes after — the
   repro from the blocker ledger is that test, verbatim, when one exists.
-- Every new invariant test gets its hostile twin at birth (cheaper than retrofitting).
+- Every new invariant test gets its hostile twin at birth (cheaper than retrofitting) —
+  and if the project's standards doc has no §3 entry making that binding yet, add one in
+  the same commit.
 - The PR checklist (template §8) is answered literally, with commands run, not vibes.
 - **Never reduce test strictness to make a failing test pass.** Loosening an assertion is
   a deliberate, explained act — silently widening a tolerance or deleting an assertion to

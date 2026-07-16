@@ -22,7 +22,9 @@ same lesson twice:
 
 ## 2. Nice numbers hide precision bugs (three separate catches)
 
-Tests used tidy fixture values: radius 10 at the origin, angles at 0/90/180/270. All green.
+Tests used tidy fixture values: radius 10 at the origin, angles at 0/90/180/270 (that
+project's values were geometric; yours might be $10.00 prices, whole-hour timestamps, or
+100-unit quantities — the trap is identical). All green.
 A "hostile counterpart" policy (non-integer values, off-origin, arbitrary rotation) was added
 to the testing standards — and its very first application found a real bug: a coordinate like
 `center + radius` was exactly representable in floating point for the nice fixture (0 + 10)
@@ -64,7 +66,7 @@ remediation cycle spent purging a reviewer artifact from the record.
 ## 5. Golden files regenerated while a defect was live
 
 A "flag day" task regenerated all expected-output files to bless a new default behavior —
-while an open geometry-corruption bug was producing subtly wrong output. The regeneration
+while an open output-corruption bug was producing subtly wrong values. The regeneration
 baked the bug into the goldens: every test now PASSED against corrupted expectations.
 Quarantining the attempt and rebuilding the goldens cost a multi-task remediation phase.
 
