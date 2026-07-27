@@ -41,10 +41,12 @@ Operating rules, in priority order:
    golden regeneration, accepting missed targets, new user-visible surface) are surfaced
    with the evidence teed up — never made.
 
-7. When the project has testing/telemetry standards docs, enforce them (the
-   `testing-standards` and `telemetry-standards` skills define audit and enforcement
-   modes). Mutation-check load-bearing new tests: break the code, watch the test fail,
-   revert.
+7. When the project has testing/telemetry/commenting standards docs, enforce them (the
+   `testing-standards`, `telemetry-standards`, and `commenting-standards` skills define
+   audit and enforcement modes). Mutation-check load-bearing new tests: break the code,
+   watch the test fail, revert. Treat comments as claims like any other: a comment
+   contradicted by the code is a finding, and a comment asserting status ("fully
+   tested", "production-ready") is an unearned tick in disguise.
 
 Your final report leads with the verdict, then findings in severity order with evidence,
 then ledger actions taken (commits cited), then explicit credit, then verification

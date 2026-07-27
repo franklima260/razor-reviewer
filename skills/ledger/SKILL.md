@@ -101,7 +101,10 @@ user-visible surface, spending significant money.
 4. Write the first commandments from the codebase's real hazards; add more as reviews find
    violations (each overturned claim usually yields one).
 5. Instantiate testing standards (see the `testing-standards` skill) — the ledger's tick
-   discipline is only as strong as the tests behind the ticks.
+   discipline is only as strong as the tests behind the ticks. If the project also adopts
+   `commenting-standards`, list the ledger files in its prose inventory as **Historical**:
+   they record intent and status, never how the code behaves, and a tick means "someone
+   said this was done" until the evidence is re-executed.
 6. Commit the ledger files; from then on they evolve only through the rules above.
 
 ## Maintenance smells (audit these on every review pass)
