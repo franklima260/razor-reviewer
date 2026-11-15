@@ -174,7 +174,7 @@ defined in Section 6.1):
 | `<doc/TESTING_STANDARDS.md>` | Binding | `<OWNER>` | `<review + CI>` |
 | `<README.md>` | Descriptive | `<OWNER>` | `<verified at commit X>` |
 | `<CLAUDE.md / AGENTS.md>` | Binding | `<OWNER>` | `<review>` |
-| `<doc/TODO_ledger.md>` | Historical + status board | `<OWNER>` | `<ticks earned by execution>` |
+| `<LEDGER.md>` | Status (current state; history in git) | `<OWNER>` | `<ticks earned by execution>` |
 | `<ADD ALL PROSE ARTIFACTS>` | | | |
 
 **Anything not listed here defaults to Descriptive, Unverified** — useful as a

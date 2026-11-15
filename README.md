@@ -16,26 +16,26 @@ the verification discipline and the standards it enforces.
 | Piece | What it does |
 |---|---|
 | `skills/adversarial-review` | The Razor protocol: claim inventory → evidence binding → re-execution → executable repros → ranked findings → tick discipline. Ships a war-stories catalog of ten generalized real incidents. |
-| `skills/ledger` | Three-file project discipline (TODO + status board + commandments, BLOCKERS deviation ledger, evidence docs), tick rules, STOP gates, bootstrap procedure. Templates included. |
+| `skills/ledger` | A short `LEDGER.md` snapshot (goal, invariants, run recipe, tasks, open items) written only on request or at handoff — never a running log. |
 | `skills/testing-standards` | Instantiate / audit / enforce a binding TESTING_STANDARDS.md. Vendors the full language-agnostic template (anti-pattern catalog, contract testing, PR checklist, incident log). |
 | `skills/telemetry-standards` | Same three modes for structured logging + metrics standards (single chokepoint, outcome bucketing, PII rules, diagnostic recipes). Template vendored. |
 | `skills/commenting-standards` | Same three modes for comments and docs. Treats prose as an unverified claim: trust hierarchy, anti-pattern catalog, doc-comment contracts, epistemic status headers for READMEs/instruction files/ledgers. Specifies an enforcement checker the onboarding agent builds in the project's own stack, with a severity split and an adoption ratchet. Template vendored. |
 | `skills/grill-me` | Spec-first interrogation before any code exists: regret-ordered interview rounds alternating with attack passes run by a fresh agent that sees only the spec, looping until two consecutive attacks come back empty. Writes a dated spec to `docs/specs/`. Template, question bank, and attack briefs included. |
-| `skills/handoff` | Cold-start kickoff prompts for the next agent/session: orientation list, verified state, task queue with gates, environment recipes, discipline expectations. |
+| `skills/handoff` | A ≤10-line cold-start prompt for the next agent/session. |
 | `agents/razor.md` | The reviewer as an invocable subagent. |
 
 ## The workflow in one paragraph
 
 Grill the spec first (`grill-me`) — interview and independent attack, cycling until the
 attacks go quiet, producing a dated spec whose assumptions all carry a stated blast radius.
-Bootstrap a project from it with the `ledger` skill (mission, commandments, baseline, phased tasks
-with Done-when) and the three standards skills (testing, telemetry, commenting). Implementing agents work
+Bootstrap a project from it with the `ledger` skill (goal, invariants, baseline, tasks with
+Done-when) and the three standards skills (testing, telemetry, commenting). Implementing agents work
 one task per commit, harness-before-feature, ticking only what they executed. At every
 milestone, `razor` (or the `adversarial-review` skill inline) re-executes every claim,
-attacks with hostile repros, removes unearned ticks, and files findings with verbatim
-fixtures in the blockers ledger. Human decisions sit behind explicit STOP gates with
-rulings recorded verbatim against the numbers they were made on. Phase boundaries produce
-`handoff` prompts so the next agent starts hot.
+attacks with hostile repros, removes unearned ticks, and commits repros as failing
+tests. Human decisions sit behind explicit STOP gates with
+rulings recorded against the numbers they were made on. Agent switches get a short `handoff`
+prompt.
 
 ## Install
 

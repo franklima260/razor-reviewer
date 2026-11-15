@@ -132,5 +132,5 @@ EVIDENCE.
 
 - Decision thresholds are inputs to a human ruling, not self-executing laws. When evidence
   moves materially, the ruling returns to the human even if the label wouldn't change.
-- Record rulings verbatim in the ledger with the numbers they were made against, so a later
+- Record rulings in the ledger with the numbers they were made against, so a later
   change in numbers visibly invalidates the ruling's basis.

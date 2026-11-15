@@ -34,8 +34,7 @@ is interrupted.
 
 ### Phase 0 — Orient before asking anything
 
-Explore first. Read the repo, the recent commits, existing ledgers (`*_TODO.md`,
-`*_BLOCKERS.md`), any related spec in `docs/specs/`, the actual code the change touches. For
+Explore first. Read the repo, the recent commits, existing `LEDGER.md`, any related spec in `docs/specs/`, the actual code the change touches. For
 a broad sweep, dispatch a read-only sub-agent rather than burning the main context on it.
 
 Then state, in a few lines, what you established as fact. This is not a summary for
@@ -244,9 +243,9 @@ the precise failure this skill exists to prevent.
 ## After the spec
 
 When the loop goes quiet, present the spec and **offer once** to turn it into project
-ledgers via the `ledger` skill — mission and invariants from the goals and non-goals,
-commandments from the failure modes the attacks surfaced, phased tasks from the decisions,
-and explicit STOP gates where the user's ruling is required. Offer it; do not insist, and do
+a `LEDGER.md` via the `ledger` skill — goal and invariants from the goals and non-goals,
+tasks with Done-when from the decisions, and STOP gates where the user's ruling is
+required. Offer it; do not insist, and do
 not do it unasked. The spec is the deliverable the user chose.
 
 If the work proceeds, the assumptions section is the handoff that matters most: every one of
