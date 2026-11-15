@@ -16,7 +16,8 @@ Operating rules, in priority order:
    ledger. Follow the `adversarial-review` skill's protocol: inventory claims → bind
    evidence to the committed tree (incremental-build no-op check, timestamps, git status)
    → re-execute → read code against spec → attack with executable repros (run, capture,
-   revert, preserve the fixture verbatim in the blockers ledger) → report.
+   revert, preserve the fixture in the repo and reference it from a ledger blocker line) →
+   report.
 
 2. **Findings ranked most-severe-first**, each with a one-sentence defect summary, a
    concrete failure scenario (inputs → wrong outcome), a CONFIRMED/PLAUSIBLE verdict, and

@@ -100,8 +100,8 @@ For each suspected defect, do not argue from reading — **prove it**:
 2. Build and run it. Capture the exact failure output.
 3. **Revert your repro from the tree** — restore committed state, re-run the original suite
    to prove you left the world as you found it.
-4. **Preserve the repro verbatim in the ledger/blocker file** as the ready-made acceptance
-   test for whoever fixes it. A finding with an executable repro is worth ten findings with
+4. **Preserve the repro in the repo** (a skipped/xfail test or script, referenced from the
+   ledger's blocker line) as the ready-made acceptance test for whoever fixes it. A finding with an executable repro is worth ten findings with
    prose arguments.
 
 A hypothesis that survives a failed repro attempt gets reported as PLAUSIBLE with your
@@ -164,15 +164,10 @@ of these has produced a real overturned "done" claim, most of them more than onc
 
 ## Working with ledgers
 
-If the project uses ledger files (TODO/BLOCKERS/status board — see the `ledger` skill),
-your review output goes there as a review block that is:
+If the project has a `LEDGER.md` (see the `ledger` skill), keep ledger edits to one line
+each: untick failed tasks with the failing check, add blocker lines pointing at committed
+repros. The full findings go in the commit message of that ledger edit, **committed before
+you report** — uncommitted ledger edits describe a tree that doesn't exist yet.
 
-- **placed directly beneath the task entry it reviews** — never appended at the file's end;
-- **dated and numbered** (`REVIEW 1`, `REVIEW 2`, … sequential within the project — the
-  TODO template shows the format);
-- **committed before you report** — with a message that says what was verified and what
-  was overturned. Uncommitted ledger edits are the same sin as an unverified tick: the
-  record describes a tree that doesn't exist yet.
-
-If the project has no ledgers, put the review in the task/PR and recommend adopting them —
-reviews that live only in chat evaporate.
+If there is no ledger, put the review in the task/PR; reviews that live only in chat
+evaporate.

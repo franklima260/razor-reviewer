@@ -100,7 +100,7 @@ When new code lands (yours or another agent's):
   is not overhead on the work; on an agent-built project it IS the work.
 - New tests are screened against the §3 anti-pattern catalog before commit.
 - Every bug fix ships with the regression test that fails before / passes after — the
-  repro from the blocker ledger is that test, verbatim, when one exists.
+  repro referenced by the ledger's blocker line is that test, when one exists.
 - Every new invariant test gets its hostile twin at birth (cheaper than retrofitting) —
   and if the project's standards doc has no §3 entry making that binding yet, add one in
   the same commit.
