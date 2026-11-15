@@ -6,7 +6,7 @@ description: Run an adversarial verification review of work another agent (or yo
 # Adversarial Review ("Razor")
 
 You are the reviewer, not the implementer. Your deliverable is a set of **verified findings**
-and honest ledger updates — not fixes, unless the user explicitly authorizes completing
+— not fixes, unless the user explicitly authorizes completing
 mechanical, fully-spec'd work (the `razor` agent definition carries the same exception);
 attribute any such work honestly. The implementing party (human or agent) claims work is
 done; your job is to find where that claim breaks before production does.
@@ -14,7 +14,7 @@ done; your job is to find where that claim breaks before production does.
 The prime directive: **notes are hypotheses; only execution is evidence.** A completion note,
 a commit message, a checked box, a code comment — these are claims made by a party with an
 incentive to be done. Every load-bearing claim gets re-executed by you, on your machine, from
-the committed tree, before it enters any ledger as fact.
+the committed tree, before you report it as fact.
 
 Why this posture works: implementers (especially AI agents) fail in systematic ways — they
 verify the happy path, write tests that share assumptions with the code, mark things done
@@ -100,14 +100,13 @@ For each suspected defect, do not argue from reading — **prove it**:
 2. Build and run it. Capture the exact failure output.
 3. **Revert your repro from the tree** — restore committed state, re-run the original suite
    to prove you left the world as you found it.
-4. **Preserve the repro in the repo** (a skipped/xfail test or script, referenced from the
-   ledger's blocker line) as the ready-made acceptance test for whoever fixes it. A finding with an executable repro is worth ten findings with
+4. **Preserve the repro in the repo** (a skipped/xfail test or script) as the ready-made acceptance test for whoever fixes it. A finding with an executable repro is worth ten findings with
    prose arguments.
 
 A hypothesis that survives a failed repro attempt gets reported as PLAUSIBLE with your
 reasoning, clearly separated from CONFIRMED findings.
 
-### Phase 6 — Report and update the ledger
+### Phase 6 — Report
 
 Findings ranked most-severe-first. Each finding states:
 
@@ -117,16 +116,16 @@ Findings ranked most-severe-first. Each finding states:
 - **Verdict** — CONFIRMED (you executed it) or PLAUSIBLE (reasoned, not proven).
 - **Evidence** — the command you ran and its output, or file:line for reading-based findings.
 
-Then the ledger actions:
+Then:
 
 - **Remove ticks that failed verification.** A checkbox is a factual claim; if Done-when
-  is not met, untick it and say exactly why. This is the single most valuable act a
+  is not met, untick it (one line: which check failed). This is the single most valuable act a
   reviewer performs — a false tick poisons every downstream decision.
 - **Credit what is genuinely good, specifically.** "The strikethrough-in-place correction
   table is exemplary honesty" teaches more than silence. Adversarial ≠ hostile; the goal is
-  a true ledger, not a beaten implementer.
-- **Own your errors in the same ledger.** When your earlier review claim turns out wrong,
-  record the correction with the same prominence as implementer errors. The protocol's
+  a true record, not a beaten implementer.
+- **Own your errors.** When your earlier review claim turns out wrong, say so in the
+  report with the same prominence as implementer errors. The protocol's
   credibility depends on it cutting both ways.
 - If nothing survived verification: say so plainly. An empty findings list after a real
   verification pass is a meaningful, reportable result.
@@ -162,12 +161,9 @@ of these has produced a real overturned "done" claim, most of them more than onc
 9. **Unbound evidence** — test results from binaries that don't match the committed tree.
 10. **Tick inflation** — "all green" meaning a subset (unit tests, one lane, one config).
 
-## Working with ledgers
+## Where the review goes
 
-If the project has a `LEDGER.md` (see the `ledger` skill), keep ledger edits to one line
-each: untick failed tasks with the failing check, add blocker lines pointing at committed
-repros. The full findings go in the commit message of that ledger edit, **committed before
-you report** — uncommitted ledger edits describe a tree that doesn't exist yet.
-
-If there is no ledger, put the review in the task/PR; reviews that live only in chat
-evaporate.
+The report goes in chat (or the PR, if there is one). Don't write review records into the
+repo. The only repo edits a review makes: untick a failed task in `LEDGER.md` if the
+project has one, and commit any repro as a skipped/xfail test. Put the findings summary in
+that commit's message.

@@ -86,7 +86,7 @@ Trust nothing; bring every claim back to an executed command.
    test file calls it, and at least one test enters through a real entry point.
 6. **Contract check** (template §6): find hand-mirrored types/enums/params across layers;
    each is a finding with the generator/contract-test fix named.
-7. Write the audit as a dated report (in the ledger if the project uses one): findings
+7. Report the audit in chat (don't write a report file unless asked): findings
    ranked by severity, each with file:line and the executed evidence, plus explicit
    credit for what is genuinely strong.
 
@@ -100,7 +100,7 @@ When new code lands (yours or another agent's):
   is not overhead on the work; on an agent-built project it IS the work.
 - New tests are screened against the §3 anti-pattern catalog before commit.
 - Every bug fix ships with the regression test that fails before / passes after — the
-  repro referenced by the ledger's blocker line is that test, when one exists.
+  committed repro is that test, when one exists.
 - Every new invariant test gets its hostile twin at birth (cheaper than retrofitting) —
   and if the project's standards doc has no §3 entry making that binding yet, add one in
   the same commit.

@@ -60,8 +60,7 @@ prefixes, and enumerate project-specific PII. Judgment calls:
 6. **Worker visibility**: every long-lived background worker emits a heartbeat gauge; every
    spawning package has leak detection in tests (§6.3). Silent workers are the
    canonical weeks-later incident.
-7. Report findings ranked, with file:line and the grep evidence, in the ledger if the
-   project uses one.
+7. Report findings ranked, with file:line and the grep evidence, in chat.
 
 ## Mode 3 — ENFORCE (ongoing, during every feature/review)
 

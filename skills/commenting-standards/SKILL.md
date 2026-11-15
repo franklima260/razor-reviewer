@@ -130,7 +130,7 @@ Evidence-based sweep. Comments are claims; bring each one back to the code.
 8. **Test-comment check**: skipped/disabled tests without a TOMBSTONE (reason,
    ticket, re-enable condition), and any comment explaining away a weakened
    assertion — cross-file that one into the testing standards audit.
-9. Write the audit as a dated report (in the ledger if the project uses one):
+9. Report the audit in chat (don't write a report file unless asked):
    findings ranked by severity, each with file:line and executed evidence, plus
    explicit credit for prose that is genuinely carrying its weight. Where a finding
    class was mechanical, the fix is a checker rule, not a list of files — say so, so
@@ -162,7 +162,7 @@ When new code lands (yours or another agent's):
   agent with less context than you have.
 - **Never write status, progress, or confidence into a comment.** "Production-ready",
   "fully tested", "handles all edge cases" are the exact claims the adversarial-review
-  discipline exists to strip. Status is earned by execution and lives in the ledger.
+  discipline exists to strip. Status is earned by execution, not asserted in prose.
 - **Run the checker on the change and read its warnings.** A `warn` scrolled past is a
   rule silently declined. Never widen a rule, waive in bulk, or rebaseline upward to
   get a green run — that is the unearned-status failure applied to tooling, and it
