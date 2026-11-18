@@ -16,26 +16,27 @@ the verification discipline and the standards it enforces.
 | Piece | What it does |
 |---|---|
 | `skills/adversarial-review` | The Razor protocol: claim inventory → evidence binding → re-execution → executable repros → ranked findings → tick discipline. Ships a war-stories catalog of ten generalized real incidents. |
-| `skills/ledger` | Three-file project discipline (TODO + status board + commandments, BLOCKERS deviation ledger, evidence docs), tick rules, STOP gates, bootstrap procedure. Templates included. |
-| `skills/testing-standards` | Instantiate / audit / enforce a binding TESTING_STANDARDS.md. Vendors the full language-agnostic template (anti-pattern catalog, contract testing, PR checklist, incident log). |
-| `skills/telemetry-standards` | Same three modes for structured logging + metrics standards (single chokepoint, outcome bucketing, PII rules, diagnostic recipes). Template vendored. |
-| `skills/commenting-standards` | Same three modes for comments and docs. Treats prose as an unverified claim: trust hierarchy, anti-pattern catalog, doc-comment contracts, epistemic status headers for READMEs/instruction files/ledgers. Specifies an enforcement checker the onboarding agent builds in the project's own stack, with a severity split and an adoption ratchet. Template vendored. |
-| `skills/grill-me` | Spec-first interrogation before any code exists: regret-ordered interview rounds alternating with attack passes run by a fresh agent that sees only the spec, looping until two consecutive attacks come back empty. Writes a dated spec to `docs/specs/`. Template, question bank, and attack briefs included. |
-| `skills/handoff` | Cold-start kickoff prompts for the next agent/session: orientation list, verified state, task queue with gates, environment recipes, discipline expectations. |
+| `skills/ledger` | One `LEDGER.md`, 100 lines maximum: mission, invariants, up to five rules, a task table with Done-when and evidence, a blocker table. Tick rules, STOP gates, bootstrap procedure. |
+| `skills/testing-standards` | Instantiate / audit / enforce a binding TESTING_STANDARDS.md, capped at 60 lines: eight rules, ten forbidden patterns, the greps that find them, and mutation checking. |
+| `skills/grill-me` | Spec-first interrogation before any code exists: regret-ordered interview rounds alternating with attack passes run by a fresh agent that sees only the spec, looping until two consecutive attacks come back empty. Writes a dated spec to `docs/specs/`. Template included. |
+| `skills/handoff` | One `HANDOFF.md`, 50 lines maximum: the next task, verified state, up to five files to read, the commands to run, the traps. Overwritten each phase. |
 | `agents/razor.md` | The reviewer as an invocable subagent. |
+| `tools/check-docs` | Deterministic checks on `LEDGER.md` and `HANDOFF.md`: size caps, a command in every Evidence cell, no success claim without a command, no padding phrases, no prose blocks. Counts and greps only, so it costs no tokens. |
+| `tools/install-checks` | Puts the check into a project as a committed pre-commit hook (`core.hooksPath=.githooks`). One command, every agent. |
+| `tools/ensure-hooks` | Arms those hooks at session start, because `core.hooksPath` does not survive a clone. Register it once per agent on `SessionStart`; it is silent. |
 
 ## The workflow in one paragraph
 
 Grill the spec first (`grill-me`) — interview and independent attack, cycling until the
 attacks go quiet, producing a dated spec whose assumptions all carry a stated blast radius.
-Bootstrap a project from it with the `ledger` skill (mission, commandments, baseline, phased tasks
-with Done-when) and the three standards skills (testing, telemetry, commenting). Implementing agents work
-one task per commit, harness-before-feature, ticking only what they executed. At every
-milestone, `razor` (or the `adversarial-review` skill inline) re-executes every claim,
-attacks with hostile repros, removes unearned ticks, and files findings with verbatim
-fixtures in the blockers ledger. Human decisions sit behind explicit STOP gates with
-rulings recorded verbatim against the numbers they were made on. Phase boundaries produce
-`handoff` prompts so the next agent starts hot.
+Bootstrap a project from it with the `ledger` skill (one `LEDGER.md`: mission, invariants,
+rules, baseline, tasks with Done-when) and `testing-standards`. Implementing agents work
+one task per commit, harness-before-feature, ticking
+only what they executed. At every milestone, `razor` (or the `adversarial-review` skill
+inline) re-executes every claim, attacks with hostile repros, removes unearned ticks, and
+files blocker rows that name the repro tests. Human decisions sit behind explicit STOP
+gates, with the ruling recorded against the numbers it was made on. Phase boundaries
+produce a one-page `handoff` so the next agent starts hot.
 
 ## Install
 
@@ -68,14 +69,14 @@ respective skills' `assets/`.
 
 ## What you get
 
-Installed, the plugin adds seven skills and one agent (each skill or agent pays its
+Installed, the plugin adds five skills and one agent (each skill or agent pays its
 on-invoke cost only when it fires; the always-on cost is the descriptions alone):
 
 - **`grill-me`** skill — the spec-hardening interrogation that runs before code exists.
 - **`adversarial-review`** skill and **`razor`** agent — the verification protocol.
-- **`ledger`**, **`testing-standards`**, **`telemetry-standards`**,
-  **`commenting-standards`**, **`handoff`** skills — the project discipline and the
-  standards it enforces.
+- **`ledger`**, **`handoff`**, **`testing-standards`** skills — the project discipline
+  and the standards it enforces. The ledger and the handoff are capped at 100 and 50
+  lines, and `tools/` enforces those caps on commit for every agent.
 
 Most skills trigger automatically from their descriptions (e.g. asking Claude to "review the
 agent's work" or "set up testing standards"); the reviewer is also invocable as the

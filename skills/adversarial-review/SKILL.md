@@ -100,9 +100,10 @@ For each suspected defect, do not argue from reading — **prove it**:
 2. Build and run it. Capture the exact failure output.
 3. **Revert your repro from the tree** — restore committed state, re-run the original suite
    to prove you left the world as you found it.
-4. **Preserve the repro verbatim in the ledger/blocker file** as the ready-made acceptance
-   test for whoever fixes it. A finding with an executable repro is worth ten findings with
-   prose arguments.
+4. **Keep the repro as a test in the repo** — a failing or skipped test in the project's
+   own suite — and name that test in the blocker row. It is then the acceptance test for
+   whoever fixes it. A finding with an executable repro is worth ten findings with prose
+   arguments. Do not paste fixture code into the ledger.
 
 A hypothesis that survives a failed repro attempt gets reported as PLAUSIBLE with your
 reasoning, clearly separated from CONFIRMED findings.
@@ -162,17 +163,41 @@ of these has produced a real overturned "done" claim, most of them more than onc
 9. **Unbound evidence** — test results from binaries that don't match the committed tree.
 10. **Tick inflation** — "all green" meaning a subset (unit tests, one lane, one config).
 
-## Working with ledgers
+## Comments are claims
 
-If the project uses ledger files (TODO/BLOCKERS/status board — see the `ledger` skill),
-your review output goes there as a review block that is:
+Code is the only authority on what the system does, because it is the only part that
+runs. A comment is an unverified claim that reaches the next agent with the same
+authority as the code beside it, so a wrong one misdirects every agent that reads the
+file and nothing ever fails because of it.
 
-- **placed directly beneath the task entry it reviews** — never appended at the file's end;
-- **dated and numbered** (`REVIEW 1`, `REVIEW 2`, … sequential within the project — the
-  TODO template shows the format);
-- **committed before you report** — with a message that says what was verified and what
-  was overturned. Uncommitted ledger edits are the same sin as an unverified tick: the
-  record describes a tree that doesn't exist yet.
+Treat these as findings, not as style notes:
 
-If the project has no ledgers, put the review in the task/PR and recommend adopting them —
-reviews that live only in chat evaporate.
+- A comment contradicted by the code. Severity follows what it would make the next
+  agent do.
+- A status claim: "production-ready", "fully tested", "handles all edge cases",
+  "thread-safe". Status is not a property prose can confer. It is an unearned tick in
+  disguise. If it is true, a test says so.
+- A naked suppression (`# noqa`, `// nolint`, `# type: ignore`) with no reason and no
+  ticket. It is the only comment that changes what the program does.
+- A reference to a function, file, flag or ticket that does not exist. Grep before you
+  believe it.
+- Commented-out code with no explanation. Git holds it.
+
+Do not ask for more comments. The fix for a wrong comment is to delete it or correct
+it, not to add prose around it.
+
+## Working with the ledger
+
+If the project has a `LEDGER.md` (see the `ledger` skill), your review goes into it — not
+into a document of its own:
+
+- **One line in the task's Evidence cell**: date, the command you ran, the result, the
+  verdict. A `TICK REMOVED` verdict also sets the State back to `NEXT` and names the
+  Done-when criterion that failed.
+- **One blocker row for each CONFIRMED defect**, with the repro test's name.
+- **Committed before you report.** An uncommitted ledger edit describes a tree that does
+  not exist yet.
+
+Write no review block, no review log and no summary document. If the project has no
+ledger, put the review in the task or the PR and recommend the `ledger` skill — a review
+that lives only in chat evaporates.

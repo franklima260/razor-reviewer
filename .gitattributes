@@ -1,0 +1,4 @@
+.githooks/** text eol=lf
+tools/check-docs text eol=lf
+tools/install-checks text eol=lf
+tools/githooks/** text eol=lf

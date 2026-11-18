@@ -1,67 +1,52 @@
 ---
 name: handoff
-description: Generate a kickoff/handoff prompt for the next agent (or session) continuing multi-session project work. Use when the user says "make me a prompt for the next agent", "prepare the handoff", "we're switching agents/models", "write up where we are for the next session", or when a work phase completes and a different agent will pick up the next one. Produces a self-contained brief a cold agent can execute without access to this conversation.
+description: Write a one-page HANDOFF.md that lets the next agent or session start work immediately. Use when the user says "make me a prompt for the next agent", "prepare the handoff", "we're switching agents/models", "write up where we are for the next session", or when a phase ends and a different agent takes the next one. The output is a brief, not a report.
 ---
 
-# Agent Handoff
+# Handoff
 
-The next agent starts with **zero shared context** — it hasn't seen this conversation,
-doesn't know the project's private vocabulary, and will happily re-derive (wrongly) anything
-you leave implicit. A handoff prompt is a cold-start executable: everything load-bearing is
-either stated in it or pointed to by exact file path.
+Write one file, `HANDOFF.md`, in the repo root. Paste the same text in chat.
 
-The failure this prevents: each session re-explains the project ad hoc, each explanation
-drifts, and by the fifth agent the "known facts" include three telephone-game mutations.
-The ledger files are the antidote (see the `ledger` skill) — the handoff's main job is to
-route the agent into them in the right order and frame the discipline expectations.
+The next agent has no memory of this session. Give it only the facts that it must
+have to start work in the next five minutes. Do not explain the project. Do not
+repeat what `LEDGER.md` says — point to it.
 
-## Structure (use these sections, adapt lengths to the work)
+**Hard limit: 50 lines.** More than that is explanation, not a handoff.
 
-1. **Role and accountability, first paragraph.** Whether the agent is implementing or
-   reviewing, and that an adversarial reviewer will re-execute every claim it makes. Say
-   plainly: the ledger records what ran, never what was intended to run. If prior agents
-   have had ticks removed, say so — it calibrates honesty better than any rule list.
+## Template
 
-2. **Orientation reading list, ordered, with WHY per item.** The ledger TODO (status board
-   first, then the active task's full spec), the blockers ledger, the design plan/spec,
-   the testing standards doc, key evidence docs, and the specific source files the task
-   touches. Every entry is an exact path. Keep it to what the task needs — ten documents
-   nobody reads is worse than five that get read.
+Copy this. Delete each line that you cannot fill with a fact that you verified now.
 
-3. **Verified current state.** Green counts per configuration, at which commit, verified by
-   whom and how. Decisions already made — rulings recorded verbatim, with their basis —
-   so the agent doesn't relitigate them. Known open limitations with their blocker-ledger
-   entries. Only state things here that YOU have verified or that carry a citation into a
-   ledger; a handoff that launders unverified claims poisons the next session at birth.
+````markdown
+# HANDOFF — <project> — <date> — <commit sha>
 
-4. **The task queue, strictly ordered, with gates.** Which task is active, what its
-   Done-when is, what is explicitly NOT to be started (STOP gates, gated phases), and any
-   parallelizable side work. Repeat the single highest-risk trap for the active task
-   inline — the one thing most likely to ship a regression.
+**Do next:** <the one task, and its Done-when criterion.>
 
-5. **Environment recipe.** Exact PATH/setup incantations, build and test commands, quirks
-   that cost hours to rediscover (temp-dir workarounds, shell gotchas, flaky steps and
-   their fixes), and where current green counts live. This section has the highest
-   value-per-line of the whole handoff; hard-won environment knowledge otherwise
-   evaporates between sessions.
+**State:** <X/Y tests pass>, at `<sha>`, from `<command you ran>`.
+<One line for each open blocker: id — what it stops.>
 
-6. **Discipline expectations.** One task one commit; commit message cites the task ID and
-   the project's trailer conventions; tick only what was executed; harness before feature;
-   blockers ledger + STOP when the plan and reality disagree; evidence runs after the
-   final commit from the committed tree.
+**Read first** (max 5):
+- `<exact path>` — <why, 5 words>
+- `<exact path>` — <why, 5 words>
 
-## Rules of construction
+**Run:**
+```
+<setup>
+<build>
+<test>
+```
+<One line for each environment trap that costs more than 10 minutes.>
 
-- **Pull numbers from the ledgers at generation time** — don't quote from memory. If the
-  status board and your memory disagree, the ledgers win (and the discrepancy is worth a
-  note of its own).
-- **Quote specs verbatim where exactness matters** (fixture code, Done-when criteria,
-  commandments). Paraphrase is where drift enters.
-- **Name the anti-patterns by their war stories** when the project has them — "the last
-  premature-'verified' cost a full review cycle" lands harder than "be honest".
-- Write it to a file in the repo (e.g. `HANDOFF_<PHASE>.md`) so it survives the session,
-  AND paste it in chat for immediate use. Refresh the file at each phase boundary rather
-  than accreting stale generations.
-- End with the first concrete action: "Start by reading the documents above, then confirm
-  your integration plan (call sites verified by grep, fixtures written and failing) before
-  writing code."
+**Rules:** <up to 3 project rules. `LEDGER.md` holds the rest.>
+
+**Do not:** <the gate, or the mistake most likely to break the work.>
+````
+
+## Rules
+
+- Every number comes from a command that you ran now. Do not quote memory. If the
+  ledger and your memory disagree, the ledger wins.
+- Every path is exact. Do not write "the config file".
+- Quote a Done-when criterion word for word. A paraphrase causes drift.
+- Give no history, no rationale, no philosophy. Git and the ledger keep those.
+- Overwrite the same file at each phase. Do not keep old handoffs.

@@ -42,9 +42,9 @@ Then state, in a few lines, what you established as fact. This is not a summary 
 politeness — it is a correction opportunity. Wrong facts silently steer every question that
 follows, and the user can only correct what they can see.
 
-Choose the question set: `references/question-bank.md` carries a sharp software set and a
-general fallback for decisions that are not code. Default to the software set; fall back
-only when the topic clearly is not software.
+Ask what the user will regret not deciding. Order the questions by blast radius: what
+is expensive to change later comes first, cosmetics never. Write your own questions from
+the topic in front of you; a stock list asks about a project you are not building.
 
 ### Phase 1 — Interview rounds
 
@@ -165,14 +165,15 @@ The failure this prevents has a shape worth recognizing: no sentence is wrong, t
 contradiction lives *between* two sentences written at different times, and neither author
 had the other in view. "Funded from our own cash," recorded in round one, and "we can draw
 on the line of credit," recorded in round four, are each unremarkable — together they
-dissolve the argument the first one was holding up. See the composition pass in
-`references/attack-briefs.md` for the full procedure the attacker runs; your job here is the
-lighter version, applied one fact at a time as you write.
+dissolve the argument the first one was holding up. Check each new answer against the
+ones already written down, one fact at a time, as you write.
 
 ### Phase 3 — Independent attack
 
 Dispatch a **fresh agent that reads only the spec file** — never this conversation, never
-the transcript, never your notes. Briefs are in `references/attack-briefs.md`.
+the transcript, never your notes. Brief it in three lines: find the assumption that, if
+false, wastes the most work; find two statements that cannot both hold; name what the spec
+does not say and must. It reports findings only, and proposes nothing.
 
 Why the isolation matters: a context that helped write the plan cannot attack it honestly.
 It fills gaps unconsciously from things it remembers being discussed but never actually

@@ -1,0 +1,30 @@
+#!/bin/sh
+# pre-commit - refuse a commit whose ledger or handoff breaks the size and
+# evidence rules. It checks the STAGED content, not the working tree.
+#
+# Installed by tools/install-checks, which also sets core.hooksPath=.githooks
+# so the hook is version-controlled and every agent on every machine gets it.
+
+dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+chk="$dir/check-docs"
+[ -f "$chk" ] || exit 0   # nothing to enforce
+
+files=$(git diff --cached --name-only --diff-filter=ACM \
+        | grep -E '(^|/)(LEDGER\.md|HANDOFF\.md|[A-Za-z0-9_-]+_LEDGER\.md)$')
+[ -z "$files" ] && exit 0
+
+tmp=$(mktemp -d) || exit 1
+trap 'rm -rf "$tmp"' EXIT
+
+rc=0
+for f in $files; do
+  base=$(basename "$f")
+  git show ":$f" > "$tmp/$base" 2>/dev/null || continue
+  if ! sh "$chk" "$tmp/$base" 2>"$tmp/err"; then
+    sed "s|^$tmp/$base:|$f:|" "$tmp/err" >&2
+    rc=1
+  fi
+done
+
+[ "$rc" -eq 0 ] || echo "pre-commit: do not pass --no-verify. Fix the file." >&2
+exit "$rc"

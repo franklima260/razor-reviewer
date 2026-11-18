@@ -1,0 +1,92 @@
+#!/bin/sh
+# check-docs - deterministic size and honesty checks on ledger and handoff files.
+#
+# usage: check-docs [file ...]
+#        With no arguments it checks LEDGER.md and HANDOFF.md if they exist.
+#
+# Prints one line for each failure, as "file:line: message".
+# Exit 0 = clean, 1 = failures found.
+#
+# It counts and greps; it never reads the prose. Running it costs no tokens.
+
+PAD='should (pass|work)|in order to|it is important|note that|as mentioned|comprehensive|seamless'
+CLAIM='verified|all green|tests pass|passes|succeeds'
+
+found=$(mktemp) || exit 1
+trap 'rm -f "$found"' EXIT
+
+cap_for() {
+  case "$(basename "$1" | tr 'A-Z' 'a-z')" in
+    ledger.md|*_ledger.md)    echo 100 ;;
+    handoff.md|handoff_*.md)  echo 50 ;;
+    *)                        echo 0 ;;
+  esac
+}
+
+check_file() {
+  f="$1"
+  if [ ! -f "$f" ]; then
+    echo "$f:1: not found" >> "$found"; return
+  fi
+  cap=$(cap_for "$f")
+  if [ "$cap" -eq 0 ]; then
+    echo "$f:1: no size rule for this file name" >> "$found"; return
+  fi
+
+  # 1 - hard size cap
+  n=$(wc -l < "$f" | tr -d ' ')
+  [ "$n" -gt "$cap" ] && \
+    echo "$f:1: $n lines (max $cap). Delete finished rows and every paragraph that explains instead of instructs." >> "$found"
+
+  # 2 - a task row marked done must carry a command as its evidence
+  awk -F'|' -v f="$f" '
+    /^[[:space:]]*\|/ && NF >= 6 {
+      id = $2; state = $5; ev = $6
+      gsub(/^[[:space:]]+|[[:space:]]+$/, "", id)
+      gsub(/^[[:space:]]+|[[:space:]]+$/, "", state)
+      gsub(/^[[:space:]]+|[[:space:]]+$/, "", ev)
+      if (id ~ /^T[0-9]/ && tolower(state) == "done" && ev !~ /`/)
+        printf "%s:%d: task %s says done but its Evidence cell holds no command. Run it, or set the state back to NEXT.\n", f, NR, id
+    }' "$f" >> "$found"
+
+  # 3 - a success claim on a line that shows no command
+  grep -n -i -E "$CLAIM" "$f" 2>/dev/null | grep -v '`' | cut -d: -f1 | while read -r ln; do
+    echo "$f:$ln: success claim with no command on the line. Put the command in backticks, or drop the claim." >> "$found"
+  done
+
+  # 4 - padding phrases
+  grep -n -i -E "$PAD" "$f" 2>/dev/null | cut -d: -f1 | while read -r ln; do
+    echo "$f:$ln: padding phrase. State the fact, or delete the line." >> "$found"
+  done
+
+  # 5 - a run of prose longer than four lines is narrative, not a brief
+  awk -v f="$f" '
+    /^[[:space:]]*```/ { fence = !fence; run = 0; next }
+    fence             { next }
+    /^[[:space:]]*$/ || /^[[:space:]]*[|#>*+-]/ || /^[[:space:]]*[0-9]+\./ { run = 0; next }
+    { run++; if (run == 5) printf "%s:%d: prose block over 4 lines. These files hold rows, not paragraphs.\n", f, NR }
+  ' "$f" >> "$found"
+
+  # 6 - a handoff points at five files at most
+  case "$(basename "$f" | tr 'A-Z' 'a-z')" in
+    handoff*.md)
+      c=$(awk '/[Rr]ead first/ { go = 1; next }
+               go && /^[[:space:]]*[-*]/ { c++ }
+               go && /^[[:space:]]*$/ && c { go = 0 }
+               END { print c + 0 }' "$f")
+      [ -n "$c" ] && [ "$c" -gt 5 ] && \
+        echo "$f:1: Read first lists $c files (max 5). Keep only the ones this task needs." >> "$found"
+      ;;
+  esac
+}
+
+[ $# -eq 0 ] && set -- $(ls LEDGER.md HANDOFF.md *_LEDGER.md 2>/dev/null)
+[ $# -eq 0 ] && exit 0
+
+for f in "$@"; do check_file "$f"; done
+
+[ -s "$found" ] || exit 0
+sort -u "$found" >&2
+echo "" >&2
+echo "check-docs: fix the lines above, then commit again." >&2
+exit 1

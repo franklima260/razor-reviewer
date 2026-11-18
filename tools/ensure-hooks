@@ -1,0 +1,30 @@
+#!/bin/sh
+# ensure-hooks [--json] [path] - arm a repo's committed hooks for whichever
+# agent opened it.
+#
+# core.hooksPath is LOCAL git config, so it does NOT survive a clone. Every
+# agent runs this at session start. If the repo ships .githooks/ and the config
+# does not point there yet, it points it there. It prints nothing, so it costs
+# no tokens. --json prints {} for agents that require a JSON object on stdout.
+#
+# With no path it takes the repo from the agent's stdin payload ("cwd": "...").
+
+json=0
+[ "$1" = "--json" ] && { json=1; shift; }
+out() { [ "$json" -eq 1 ] && printf '{}\n'; exit 0; }
+
+dir="$1"
+if [ -z "$dir" ] && [ ! -t 0 ]; then
+  dir=$(sed -n 's/.*"cwd"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' 2>/dev/null | head -1)
+fi
+[ -z "$dir" ] && dir=$(pwd)
+
+cd "$dir" 2>/dev/null || out
+top=$(git rev-parse --show-toplevel 2>/dev/null) || out
+cd "$top" 2>/dev/null || out
+
+[ -f .githooks/pre-commit ] || out
+[ "$(git config core.hooksPath 2>/dev/null)" = ".githooks" ] && out
+
+git config core.hooksPath .githooks 2>/dev/null
+out
