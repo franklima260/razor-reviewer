@@ -2,8 +2,10 @@
 # install-checks [repo-path]
 #
 # Puts the ledger/handoff check into a project, for every agent at once:
-#   <repo>/.githooks/pre-commit   - runs on each commit
+#   <repo>/.githooks/pre-commit   - size caps, the document gate, spec supersede
+#   <repo>/.githooks/commit-msg   - one task, one commit
 #   <repo>/.githooks/check-docs   - the checks themselves
+#   <repo>/.githooks/allow-docs   - names allowed past the document gate
 #   git config core.hooksPath .githooks
 #
 # core.hooksPath keeps the hook in version control, so a new clone, a new
@@ -17,9 +19,12 @@ git rev-parse --git-dir >/dev/null 2>&1 || { echo "not a git repository: $repo" 
 top=$(git rev-parse --show-toplevel) && cd "$top" || exit 1
 
 mkdir -p .githooks || exit 1
-cp "$src/check-docs"          .githooks/check-docs || exit 1
-cp "$src/githooks/pre-commit" .githooks/pre-commit || exit 1
-chmod +x .githooks/check-docs .githooks/pre-commit 2>/dev/null
+cp "$src/check-docs"           .githooks/check-docs || exit 1
+cp "$src/githooks/pre-commit"  .githooks/pre-commit || exit 1
+cp "$src/githooks/commit-msg"  .githooks/commit-msg || exit 1
+[ -f .githooks/allow-docs ] || printf '# One file name per line that may exist despite the document gate.
+' > .githooks/allow-docs
+chmod +x .githooks/check-docs .githooks/pre-commit .githooks/commit-msg 2>/dev/null
 git config core.hooksPath .githooks || exit 1
 
 # A hook with CRLF endings will not run. Pin the hooks to LF.
@@ -30,5 +35,6 @@ if ! grep -q '^\.githooks/' .gitattributes 2>/dev/null; then
 fi
 
 echo "installed in $top"
-echo "  .githooks/pre-commit  .githooks/check-docs  (core.hooksPath=.githooks)"
+echo "  .githooks/pre-commit  .githooks/commit-msg  .githooks/check-docs  .githooks/allow-docs"
+echo "  core.hooksPath=.githooks"
 echo "Commit both files, so every agent and every clone gets the same check."

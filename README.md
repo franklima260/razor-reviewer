@@ -21,8 +21,10 @@ the verification discipline and the standards it enforces.
 | `skills/grill-me` | Spec-first interrogation before any code exists: regret-ordered interview rounds alternating with attack passes run by a fresh agent that sees only the spec, looping until two consecutive attacks come back empty. Writes a dated spec to `docs/specs/`. Template included. |
 | `skills/handoff` | One `HANDOFF.md`, 50 lines maximum: the next task, verified state, up to five files to read, the commands to run, the traps. Overwritten each phase. |
 | `agents/razor.md` | The reviewer as an invocable subagent. |
-| `tools/check-docs` | Deterministic checks on `LEDGER.md` and `HANDOFF.md`: size caps, a command in every Evidence cell, no success claim without a command, no padding phrases, no prose blocks. Counts and greps only, so it costs no tokens. |
-| `tools/install-checks` | Puts the check into a project as a committed pre-commit hook (`core.hooksPath=.githooks`). One command, every agent. |
+| `tools/check-docs` | Deterministic checks on the ledger (100 lines), handoff (50), testing standards (60) and specs (120): size caps, a command in every Evidence cell, no success claim without a command, no padding phrases, no prose blocks. Counts and greps only, so it costs no tokens. |
+| `tools/githooks/pre-commit` | Runs those checks on the staged content, refuses a **new** status document (`PROGRESS.md`, `AUDIT_REPORT.md`, …) so a cap cannot be dodged by opening a second file, and makes a new spec supersede the old one instead of accumulating. `.githooks/allow-docs` lists deliberate exceptions. |
+| `tools/githooks/commit-msg` | One task, one commit: a commit that changes the ledger must name the task (`T2.3`). |
+| `tools/install-checks` | Puts all of it into a project (`core.hooksPath=.githooks`). One command, every agent. |
 | `tools/ensure-hooks` | Arms those hooks at session start, because `core.hooksPath` does not survive a clone. Register it once per agent on `SessionStart`; it is silent. |
 
 ## The workflow in one paragraph

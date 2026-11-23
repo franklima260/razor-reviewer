@@ -1,30 +1,61 @@
 #!/bin/sh
-# pre-commit - refuse a commit whose ledger or handoff breaks the size and
-# evidence rules. It checks the STAGED content, not the working tree.
+# pre-commit - three deterministic gates. It never reads prose, so it costs nothing.
 #
-# Installed by tools/install-checks, which also sets core.hooksPath=.githooks
-# so the hook is version-controlled and every agent on every machine gets it.
+#   1. size and evidence rules on the staged ledger, handoff, standards and spec files
+#   2. no NEW status document may appear (the caps are useless without this gate)
+#   3. a new spec must supersede the old one of the same name, not sit beside it
+#
+# Installed by tools/install-checks, which sets core.hooksPath=.githooks.
+# To allow a name on purpose, add it to .githooks/allow-docs, one per line.
 
 dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 chk="$dir/check-docs"
-[ -f "$chk" ] || exit 0   # nothing to enforce
-
-files=$(git diff --cached --name-only --diff-filter=ACM \
-        | grep -E '(^|/)(LEDGER\.md|HANDOFF\.md|[A-Za-z0-9_-]+_LEDGER\.md)$')
-[ -z "$files" ] && exit 0
-
-tmp=$(mktemp -d) || exit 1
-trap 'rm -rf "$tmp"' EXIT
-
+allow="$dir/allow-docs"
 rc=0
-for f in $files; do
+
+added=$(git diff --cached --name-only --diff-filter=A)
+acm=$(git diff --cached --name-only --diff-filter=ACM)
+
+# --- gate 1: the files that have rules -------------------------------------
+files=$(printf '%s\n' "$acm" | grep -iE '(^|/)(LEDGER\.md|HANDOFF\.md|TESTING_STANDARDS\.md|[A-Za-z0-9_-]+_(LEDGER|HANDOFF|TESTING_STANDARDS)\.md)$|(^|/)docs/specs/.+\.md$')
+if [ -n "$files" ] && [ -f "$chk" ]; then
+  tmp=$(mktemp -d) || exit 1
+  for f in $files; do
+    base=$(basename "$f")
+    mkdir -p "$tmp/$(dirname "$f")"
+    git show ":$f" > "$tmp/$f" 2>/dev/null || continue
+    if ! sh "$chk" "$tmp/$f" 2>"$tmp/err"; then
+      sed "s|^$tmp/$f:|$f:|; s|^$tmp/|{staged}/|" "$tmp/err" >&2
+      rc=1
+    fi
+  done
+  rm -rf "$tmp"
+fi
+
+# --- gate 2: no new status document ----------------------------------------
+# An agent that hits a size cap writes a second file instead of writing less.
+DENY='PROGRESS|NOTES|SUMMARY|STATUS|TODO|TODOS|TASKS|TASK_LIST|BLOCKERS|PLAN|PLANS|IMPLEMENTATION_PLAN|MASTER_PLAN|DAILY_SUMMARY|AUDIT|AUDIT_REPORT|REVIEW|REVIEW_NOTES|REPORT|FINDINGS|RETRO|RETROSPECTIVE|POSTMORTEM|WORKLOG|JOURNAL|SESSION|SESSION_LOG|HANDOVER'
+for f in $added; do
   base=$(basename "$f")
-  git show ":$f" > "$tmp/$base" 2>/dev/null || continue
-  if ! sh "$chk" "$tmp/$base" 2>"$tmp/err"; then
-    sed "s|^$tmp/$base:|$f:|" "$tmp/err" >&2
+  stem=$(printf '%s' "$base" | sed 's/\.[Mm][Dd]$//; s/\.txt$//' | tr 'a-z' 'A-Z')
+  printf '%s' "$base" | grep -qiE '\.(md|txt)$' || continue
+  printf '%s' "$stem" | grep -qE "^($DENY)$|^[A-Z0-9_-]+_($DENY)$|^($DENY)_[A-Z0-9_-]+$" || continue
+  if [ -f "$allow" ] && grep -qxF "$base" "$allow"; then continue; fi
+  echo "$f:1: new status document. Put it in LEDGER.md instead." >&2
+  echo "        If this one is deliberate: echo '$base' >> .githooks/allow-docs" >&2
+  rc=1
+done
+
+# --- gate 3: specs supersede, they do not accumulate ------------------------
+for f in $(printf '%s\n' "$added" | grep -E '(^|/)docs/specs/.+\.md$'); do
+  slug=$(basename "$f" .md | sed 's/^[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}--//')
+  old=$(git ls-files "$(dirname "$f")" | grep -- "--$slug\.md$" | grep -v "^$f$")
+  if [ -n "$old" ]; then
+    echo "$f:1: a spec for '$slug' already exists. Supersede it in place:" >&2
+    printf '        %s\n' $old >&2
     rc=1
   fi
 done
 
-[ "$rc" -eq 0 ] || echo "pre-commit: do not pass --no-verify. Fix the file." >&2
+[ "$rc" -eq 0 ] || echo "pre-commit: do not pass --no-verify. Fix it." >&2
 exit "$rc"

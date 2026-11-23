@@ -1,6 +1,6 @@
 {
   "name": "razor-reviewer",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Adversarial-review, ledger-driven, testing-first development workflow. Trust nothing, verify everything by execution. Includes the Razor reviewer agent, a one-file project ledger, one-page handoffs, spec grilling, testing standards, and a commit hook that enforces the size and evidence limits.",
   "author": {
     "name": "Frank Lima"

@@ -62,6 +62,11 @@ This is the whole structure. Add nothing to it.
 - **Blockers.** When the plan and the code disagree, and neither the plan nor the
   existing behaviour answers it, add a blocker row and stop. Keep the repro as a test
   in the repo; the row holds the test name, not the test code.
+- **One document.** Never open a second status file. A cap you cannot meet means you
+  must delete rows, not start `PROGRESS.md`. The commit hook refuses the usual names; if
+  one is genuinely needed, add it to `.githooks/allow-docs` and say why in the commit.
+- **Do not restate the work in chat.** The row is the record. Give the task ID, the
+  command and its result. No summary essay, no walk through the diff.
 - **Never pass `--no-verify`.** The pre-commit check is the limit, not advice.
 - **Delete, do not accumulate.** When a phase ends, delete its `done` rows. Git keeps
   the history. The ledger shows the present.
@@ -73,9 +78,10 @@ This is the whole structure. Add nothing to it.
    does not build, that is blocker B1. Stop there.
 3. Write the tasks as rows. Each Done-when must be a command with an expected result.
 4. Write the rules from the hazards that you found in step 2 and 3.
-5. Install the check: `sh <plugin>/tools/install-checks .` It adds a pre-commit
-   hook that refuses a commit which breaks the limits above. It costs nothing
-   to run, and it is the same check for every agent.
+5. Install the checks: `sh <plugin>/tools/install-checks .` They refuse a commit that
+   breaks a size limit, ticks a task with no command, opens a second status document, or
+   changes the ledger without naming a task. They cost nothing to run, and they are the
+   same checks for every agent.
 6. Commit `LEDGER.md`, `.githooks/` and `.gitattributes`.
 
 ## Audit each review

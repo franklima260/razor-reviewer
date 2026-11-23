@@ -1,0 +1,27 @@
+#!/bin/sh
+# commit-msg - one task, one commit.
+#
+# When a commit touches LEDGER.md, its message must name the task it advances
+# (T1, T2.3, ...). A ledger change with no task ID is bookkeeping detached from
+# work, which is how a ledger starts lying.
+#
+# A merge, revert, fixup or the ledger's own bootstrap commit is exempt.
+
+msg_file="$1"
+[ -f "$msg_file" ] || exit 0
+
+git diff --cached --name-only --diff-filter=ACM 2>/dev/null \
+  | grep -qiE '(^|/)(LEDGER\.md|[A-Za-z0-9_-]+_LEDGER\.md)$' || exit 0
+
+msg=$(grep -v '^#' "$msg_file")
+
+# exemptions
+printf '%s' "$msg" | grep -qiE '^(merge|revert|fixup!|squash!|bootstrap)' && exit 0
+printf '%s' "$msg" | grep -qiE 'no-task|bootstrap the ledger' && exit 0
+
+printf '%s' "$msg" | grep -qE '\bT[0-9]+(\.[0-9]+)?\b' && exit 0
+
+echo "commit-msg: this commit changes LEDGER.md but names no task." >&2
+echo "            Cite the task ID (for example: \"T2.3 - swap the reader\")." >&2
+echo "            For the ledger's first commit, write \"Bootstrap the ledger\"." >&2
+exit 1
